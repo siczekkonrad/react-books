@@ -1,2 +1,2 @@
-# react-books
-Google Books Finder Free
+# books-react
+

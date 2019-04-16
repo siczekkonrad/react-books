@@ -1,0 +1,28 @@
+.PageHeader {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    padding: 50px 0;
+    margin-bottom: 50px;
+    background: #51a3f7;
+}
+
+.heading {
+    font-size: 40px;
+    color: #fff;
+}
+
+.input {
+    padding: 20px;
+    margin-right: 20px;
+}
+
+.button {
+    padding: 20px;
+}
+
+.input, .button {
+    appearance: none;
+    border-radius: 5px;
+}
