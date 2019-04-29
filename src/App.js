@@ -21,9 +21,17 @@ class App extends Component {
   
 
     preformSearch = () => {
+        this.setState({
+          filteredBooks: [],
+          startIndex: 0,
+          lastPhrase: '',
+          fetched: false,
+          totalItems: 0,
+          booksLoaded: 0
+        })
         const input = ReactDOM.findDOMNode(this.refs.search);
         fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=${input.value.toLowerCase()}&maxResults=10`
+          `https://www.googleapis.com/books/v1/volumes?q=${input.value.toLowerCase()}+intitle&maxResults=10`
         )
           .then(response => {
             if (!response.ok) {
@@ -54,7 +62,7 @@ class App extends Component {
         fetch(
           `https://www.googleapis.com/books/v1/volumes?q=${
             this.state.lastPhrase
-          }&maxResults=40&startIndex=${this.state.startIndex}`
+          }+intitle&maxResults=40&startIndex=${this.state.startIndex}`
         )
           .then(response => {
             if (!response.ok) {
@@ -63,16 +71,17 @@ class App extends Component {
             return response.json();
           })
           .then(json => {
-            const newBooks = json.items.filter(item => {
-                return this.state.filteredBooks.indexOf(item) === -1;
-            })
+            const newBooks = json.items ? json.items.filter(item => {
+              return this.state.filteredBooks.indexOf(item.id) < 0;
+            }) : [];
             this.setState(prevState => ({
-              filteredBooks: [...prevState.filteredBooks].concat(newBooks),
+              filteredBooks: [...prevState.filteredBooks].concat(
+                newBooks
+              ),
               startIndex: prevState.startIndex + 40,
               fetched: !prevState.fetched,
               booksLoaded: prevState.booksLoaded + 40
             }));
-            console.log(this.state.booksLoaded);
           })
           .catch(error => console.log(error));
       } else if(this.state.totalItems <= this.state.booksLoaded ) {
