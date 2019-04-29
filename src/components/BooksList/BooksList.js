@@ -7,7 +7,7 @@ class BooksList extends Component {
         return (
           <div className={styles.BooksList}>
             {books.map(book => (
-              <div className={styles.Book} key={book.id}>
+              <div className={styles.Book} key={book.id + book.volumeInfo.title}>
                 {!book.volumeInfo.imageLinks ? (
                   <div
                     className={`${styles.noImage} ${styles.imageSide}`}
@@ -32,7 +32,6 @@ class BooksList extends Component {
           </div>
         );
     }
-   
 }
 
 export default BooksList

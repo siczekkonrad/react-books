@@ -62,7 +62,7 @@ class App extends Component {
         fetch(
           `https://www.googleapis.com/books/v1/volumes?q=${
             this.state.lastPhrase
-          }+intitle&maxResults=40&startIndex=${this.state.startIndex}`
+          }+intitle&startIndex=${this.state.startIndex}&maxResults=40`
         )
           .then(response => {
             if (!response.ok) {
@@ -71,28 +71,38 @@ class App extends Component {
             return response.json();
           })
           .then(json => {
-            const newBooks = json.items ? json.items.filter(item => {
-              return this.state.filteredBooks.indexOf(item.id) < 0;
-            }) : [];
+            const newBooks = json.items
+              ? json.items.filter(item => {
+                  return !this.state.filteredBooks.includes(item.id);
+                })
+              : [];
+            const lengthOfCorrectBooks = newBooks.length + 1;
+
             this.setState(prevState => ({
               filteredBooks: [...prevState.filteredBooks].concat(
                 newBooks
               ),
-              startIndex: prevState.startIndex + 40,
+              startIndex: prevState.booksLoaded + lengthOfCorrectBooks,
               fetched: !prevState.fetched,
-              booksLoaded: prevState.booksLoaded + 40
+              booksLoaded: prevState.booksLoaded + lengthOfCorrectBooks
             }));
+
+            console.log(
+              `${this.state.booksLoaded} - ${lengthOfCorrectBooks}`
+            );
+            console.log(
+              `${this.state.totalItems} - ${this.state.booksLoaded}`
+            );
           })
           .catch(error => console.log(error));
       } else if(this.state.totalItems <= this.state.booksLoaded ) {
           console.log('all books has been loaded')
       }
-        
     }
 
     render() {
         return (
-            <div>
+            <>
                 <header className={styles.PageHeader}>
                     <h1 className={styles.heading}>Search books</h1>
                     <div>
@@ -108,7 +118,7 @@ class App extends Component {
                      <BooksList books={this.state.filteredBooks}/>
                     }
                 </div>
-            </div>
+            </>
         )
     }
 }
